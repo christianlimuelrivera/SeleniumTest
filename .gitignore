@@ -12,6 +12,12 @@ git inittarget/
 *.iws
 *.iml
 *.ipr
+target/
+.idea/
+*.iml
+Reports/
+*.log
+.DS_Store
 
 ### Eclipse ###
 .apt_generated

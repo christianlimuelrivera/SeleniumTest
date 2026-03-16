@@ -1,7 +1,0 @@
-base\Main.class
-pages\LoginPage.class
-utils\DataProviderUtil.class
-utils\ExcelUtil$1.class
-utils\ExcelUtil.class
-utils\ExtentManager.class
-utils\SheetName.class
