@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results ignored="0" total="2" passed="2" failed="0" skipped="0">
+  <reporter-output>
+  </reporter-output>
+  <suite started-at="2026-03-16T03:19:19 GMT+03:00" name="Surefire suite" finished-at="2026-03-16T03:19:27 GMT+03:00" duration-ms="8183">
+    <groups>
+    </groups>
+    <test started-at="2026-03-16T03:19:19 GMT+03:00" name="Surefire test" finished-at="2026-03-16T03:19:27 GMT+03:00" duration-ms="8183">
+      <class name="Examples.LoginTest">
+        <test-method is-config="true" signature="setup(java.lang.reflect.Method,[Ljava.lang.Object;)[pri:0, instance:Examples.LoginTest@17c1bced]" started-at="2026-03-16T03:19:20 GMT+03:00" name="setup" finished-at="2026-03-16T03:19:25 GMT+03:00" duration-ms="5817" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void Examples.LoginTest.loginTestSheet2(java.util.Map)]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[[Ljava.lang.Object;@7ed7259e]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setup -->
+        <test-method is-config="true" signature="setup(java.lang.reflect.Method,[Ljava.lang.Object;)[pri:0, instance:Examples.LoginTest@17c1bced]" started-at="2026-03-16T03:19:20 GMT+03:00" name="setup" finished-at="2026-03-16T03:19:25 GMT+03:00" duration-ms="5835" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void Examples.LoginTest.loginTestSheet1(java.util.Map)]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[[Ljava.lang.Object;@28eaa59a]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setup -->
+        <test-method signature="loginTestSheet2(java.util.Map)[pri:0, instance:Examples.LoginTest@17c1bced]" started-at="2026-03-16T03:19:25 GMT+03:00" name="loginTestSheet2" data-provider="excelDataProviderMapAnnotation" finished-at="2026-03-16T03:19:27 GMT+03:00" duration-ms="1451" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[{UserName=student, Password=Password123}]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- loginTestSheet2 -->
+        <test-method signature="loginTestSheet1(java.util.Map)[pri:0, instance:Examples.LoginTest@17c1bced]" started-at="2026-03-16T03:19:25 GMT+03:00" name="loginTestSheet1" data-provider="excelDataProviderMapAnnotation" finished-at="2026-03-16T03:19:27 GMT+03:00" duration-ms="1440" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[{UserName=student, Password=Password123}]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- loginTestSheet1 -->
+        <test-method is-config="true" signature="teardown(org.testng.ITestResult)[pri:0, instance:Examples.LoginTest@17c1bced]" started-at="2026-03-16T03:19:27 GMT+03:00" name="teardown" finished-at="2026-03-16T03:19:27 GMT+03:00" duration-ms="416" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[[TestResult name=loginTestSheet2 status=SUCCESS method=LoginTest.loginTestSheet2(java.util.Map)[pri:0, instance:Examples.LoginTest@17c1bced] output={null}]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- teardown -->
+        <test-method is-config="true" signature="teardown(org.testng.ITestResult)[pri:0, instance:Examples.LoginTest@17c1bced]" started-at="2026-03-16T03:19:27 GMT+03:00" name="teardown" finished-at="2026-03-16T03:19:27 GMT+03:00" duration-ms="417" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[[TestResult name=loginTestSheet1 status=SUCCESS method=LoginTest.loginTestSheet1(java.util.Map)[pri:0, instance:Examples.LoginTest@17c1bced] output={null}]]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- teardown -->
+      </class> <!-- Examples.LoginTest -->
+    </test> <!-- Surefire test -->
+  </suite> <!-- Surefire suite -->
+</testng-results>
