@@ -2,138 +2,97 @@ package utils;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
- *  EXCELUTIL - The Heart of Your Data-Driven Framework
- *
- * WHAT IT DOES:
- * 1. Loads TestData.xlsx from src/resources/testdata/ (Maven classpath)
- * 2. Opens the exact sheet requested by @SheetName annotation
- * 3. Reads ANY cell safely and ALWAYS returns a clean String (never null)
- * 4. Handles every possible cell type: Text, Number, Boolean, Formula, Blank
- * 5. Properly closes the Workbook (prevents memory leak when running Sheet1 + Sheet2)
+ * 🛠️ EXCELUTIL - The File Reader
+ * This class uses the Apache POI library to interact with Microsoft Excel files (.xlsx).
  */
 public class ExcelUtil {
 
-    // Stores the entire Excel workbook (needed for proper close)
+    // 📗 The Workbook represents the entire Excel file.
     private Workbook workbook;
 
-    // The specific sheet we are reading (Sheet1 or Sheet2)
+    // 📄 The Sheet represents the specific tab (e.g., "Sheet1").
     private Sheet sheet;
 
     /**
-     * Constructor - Called by DataProvider for each test method
-     *
-     * @param classpathFilePath  Example: "testdata/TestData.xlsx"
-     * @param sheetName          Example: "Sheet1" or "Sheet2" (from @SheetName)
+     * 🏗️ CONSTRUCTOR: Opens the connection to the file.
+     * @param filePath The path from config.properties.
+     * @param sheetName The name of the tab we want to read.
      */
-    public ExcelUtil(String classpathFilePath, String sheetName) {
-        try (InputStream fis = ExcelUtil.class.getClassLoader().getResourceAsStream(classpathFilePath)) {
+    public ExcelUtil(String filePath, String sheetName) {
 
-            // Safety check: File must exist in src/resources/testdata/
-            if (fis == null) {
-                throw new RuntimeException(" Excel file NOT found in classpath: " + classpathFilePath +
-                        "\n→ Please confirm folder is exactly: src/resources/testdata/TestData.xlsx");
-            }
+        // 1️⃣ SAFETY CHECK: Make sure the path string isn't empty before trying to open it.
+        if (filePath == null) {
+            throw new RuntimeException("Excel path is NULL! Check your config.properties key name.");
+        }
 
-            // Open the .xlsx file using Apache POI
+        try {
+            // 2️⃣ FILE STREAM: Creates a "pipe" to the actual file on your hard drive.
+            FileInputStream fis = new FileInputStream(filePath);
+
+            // 3️⃣ OPEN WORKBOOK: Translates the file bytes into an Excel object.
             this.workbook = new XSSFWorkbook(fis);
 
-            // Get the requested sheet
+            // 4️⃣ TARGET SHEET: Points the code to the specific tab you need.
             this.sheet = workbook.getSheet(sheetName);
 
+            // 🛑 ERROR HANDLING: If you typed "Sheet1" but the tab is named "Data", it stops here.
             if (this.sheet == null) {
-                throw new RuntimeException("Sheet '" + sheetName + "' not found in the Excel file!");
+                throw new RuntimeException("Sheet '" + sheetName + "' not found in " + filePath);
             }
-
         } catch (IOException e) {
-            throw new RuntimeException("Failed to open Excel file: " + classpathFilePath, e);
+            throw new RuntimeException("Could not find file at: " + filePath + ". Ensure path is correct in config.properties");
         }
     }
 
     /**
-     * Returns total number of rows in the sheet (including header row)
-     * Example: Sheet has 10 rows → returns 10
+     * 📊 GET ROW COUNT: Tells the loop how many times to run.
+     * sheet.getLastRowNum() returns the index (starts at 0), so we add 1 for the total.
      */
     public int getRowCount() {
         return sheet.getLastRowNum() + 1;
     }
 
     /**
-     * Returns number of columns based on the first row (header row)
+     * 📐 GET COLUMN COUNT: Based on the header row (Row 0).
      */
     public int getColumnCount() {
-        Row firstRow = sheet.getRow(0);
-        return firstRow != null ? firstRow.getLastCellNum() : 0;
+        Row r = sheet.getRow(0);
+        return r != null ? r.getLastCellNum() : 0;
     }
 
     /**
-     * 🔥 MOST IMPORTANT METHOD
-     * Reads any cell (rowNum, colNum) and returns a clean String.
-     *
-     * Handles ALL cell types safely:
-     * - Text          → trimmed string
-     * - Number        → removes .0 if it's a whole number (123.0 → "123")
-     * - Boolean       → "true" or "false"
-     * - Formula       → returns the formula as text
-     * - Blank/Empty   → empty string ""
-     *
-     * This is why your Map in DataProvider never gets null values.
+     * 🔍 GET CELL DATA: The most important method here.
+     * It looks at a specific row (r) and column (c).
      */
-    public String getCellData(int rowNum, int colNum) {
+    public String getCellData(int r, int c) {
         try {
-            Row row = sheet.getRow(rowNum);
-            if (row == null) return "";               // entire row is blank
+            // 1. Find the cell
+            Cell cell = sheet.getRow(r).getCell(c);
 
-            Cell cell = row.getCell(colNum);
-            if (cell == null) return "";              // cell is empty
-
-            // Handle different cell types
-            switch (cell.getCellType()) {
-                case STRING:
-                    return cell.getStringCellValue().trim();
-
-                case NUMERIC:
-                    double numeric = cell.getNumericCellValue();
-                    // Remove unnecessary .0 for integer numbers
-                    return (numeric == (long) numeric)
-                            ? String.valueOf((long) numeric)
-                            : String.valueOf(numeric);
-
-                case BOOLEAN:
-                    return String.valueOf(cell.getBooleanCellValue());
-
-                case FORMULA:
-                    return cell.getCellFormula().trim();
-
-                case BLANK:
-                default:
-                    return "";
-            }
+            // 2. DATA FORMATTER: This is a magic tool from Apache POI.
+            // It automatically converts numbers, dates, and formulas into exactly
+            // what you see on the screen in Excel as a String.
+            DataFormatter formatter = new DataFormatter();
+            return formatter.formatCellValue(cell).trim();
         } catch (Exception e) {
-            // Never crash the test - just return empty
+            // If the cell is completely empty, return an empty string instead of crashing.
             return "";
         }
     }
 
     /**
-     * MUST CALL THIS AFTER USE
-     * Closes the Workbook to free memory.
-     * Called automatically in DataProviderUtil (in finally block)
-     *
-     * This is what fixes the "only 1 test runs" issue!
+     * 🔒 CLOSE: Very important for Parallel Testing.
+     * It releases the file so that other tests can access it without "File in Use" errors.
      */
     public void close() {
-        if (workbook != null) {
-            try {
-                workbook.close();
-            } catch (IOException ignored) {
-                // Safe to ignore - we don't want close() to break tests
-            }
-            workbook = null;
-            sheet = null;
+        try {
+            if(workbook != null) workbook.close();
+        } catch (IOException e) {
+            // We ignore errors here because the test is already finished.
         }
     }
 }

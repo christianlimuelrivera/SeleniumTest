@@ -6,57 +6,41 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 🔥 DATAPROVIDERUTIL - The Brain of Your Data-Driven Tests
- *
- * WHAT IT DOES:
- * 1. Reads the @SheetName annotation on your @Test method (e.g. Sheet1 or Sheet2)
- * 2. Loads the correct Excel sheet from src/resources/testdata/TestData.xlsx
- * 3. Converts every row into a Map<String, String> (column header = key)
- * 4. Skips any row where a column starting with "*" is empty (required field check)
- * 5. Returns data to your test methods
+ * 📦 DATAPROVIDERUTIL - The Data Delivery Service
+ * Its job is to read Excel rows and turn them into "Test Data" for Selenium.
  */
 public class DataProviderUtil {
 
-    /**
-     * 🔥 MAIN DATAPROVIDER
-     * This method is automatically called by TestNG for every @Test that uses:
-     * dataProvider = "excelDataProviderMapAnnotation"
-     *
-     * @param method  TestNG passes the current test method (so we can read @SheetName)
-     * @return Object[][] containing Map<String, String> for each valid row
-     */
-    @DataProvider(name = "excelDataProviderMapAnnotation")
+    // 🚀 'parallel = true' allows TestNG to run different rows of data at the same time!
+    @DataProvider(name = "excelDataProviderMapAnnotation", parallel = true)
     public static Object[][] excelDataProviderMapAnnotation(Method method) {
 
-        // 1️⃣ Get sheet name from @SheetName annotation (or default to Sheet1)
+        // 1️⃣ FIND THE TARGET SHEET
+        // It looks at your @Test method to see if you wrote @SheetName("LoginData").
+        // If you didn't, it defaults to "Sheet1".
         SheetName sheetAnnotation = method.getAnnotation(SheetName.class);
-        String sheetName = (sheetAnnotation != null)
-                ? sheetAnnotation.value()
-                : "Sheet1";
+        String sheetName = (sheetAnnotation != null) ? sheetAnnotation.value() : "Sheet1";
 
-        // === DEBUG LOG - You will see this in console for every test ===
         System.out.println("\n=== DataProvider STARTED → Method: " + method.getName()
                 + " | Sheet Requested: " + sheetName + " ===");
 
-        // 2️⃣ Correct classpath path (matches your current folder structure)
-        String filePath = "testdata/TestData.xlsx";   // ← lowercase "testdata" as in your screenshot
+        // 2️⃣ GET THE FILE LOCATION
+        // Instead of hardcoding "C:/Users/...", it asks the ConfigReader where the Excel is.
+        String filePath = ConfigReader.getProperty("excelPath");
 
-        // Create ExcelUtil (it will open the file safely)
+        // 3️⃣ OPEN EXCEL
         ExcelUtil excel = new ExcelUtil(filePath, sheetName);
 
         try {
-            // Get total rows and columns from Excel
             int totalRows = excel.getRowCount();
             int totalCols = excel.getColumnCount();
 
-            System.out.println("   → Total rows in sheet: " + totalRows);
-            System.out.println("   → Total columns: " + totalCols);
-
-            // Temporary storage for valid rows
+            // Object[][] is the specific container TestNG requires for DataProviders.
             Object[][] tempData = new Object[totalRows - 1][1];
-            int index = 0;   // counts how many valid rows we actually keep
+            int index = 0;
 
-            // 3️⃣ Read all headers from first row (Row 0)
+            // 4️⃣ READ THE HEADERS (Row 0)
+            // It identifies which columns are required (marked with *) and cleans the names.
             String[] headers = new String[totalCols];
             boolean[] requiredCols = new boolean[totalCols];
 
@@ -64,14 +48,13 @@ public class DataProviderUtil {
                 String header = excel.getCellData(0, j);
                 header = (header != null) ? header.trim() : "";
 
-                requiredCols[j] = header.startsWith("*");           // * = required field
-                headers[j] = header.replace("*", "").trim();        // clean header name
-
-                System.out.println("   Header[" + j + "]: '" + headers[j]
-                        + "'" + (requiredCols[j] ? " (*REQUIRED)" : ""));
+                requiredCols[j] = header.startsWith("*"); // If it starts with *, it's mandatory
+                headers[j] = header.replace("*", "").trim(); // Clean the name for the Map key
             }
 
-            // 4️⃣ Process every data row (starting from row 1)
+            // 5️⃣ CONVERT ROWS TO MAPS
+            // This loops through every row and creates a "Dictionary" (Map).
+            // Example: { "Username": "student", "Password": "Password123" }
             for (int i = 1; i < totalRows; i++) {
                 Map<String, String> rowMap = new HashMap<>();
                 boolean skipRow = false;
@@ -80,34 +63,33 @@ public class DataProviderUtil {
                     String value = excel.getCellData(i, j);
                     value = (value == null) ? "" : value.trim();
 
-                    rowMap.put(headers[j], value);   // Put data into Map (key = header)
+                    rowMap.put(headers[j], value);
 
-                    // If this is a required column (*) and it's empty → skip entire row
+                    // 🛑 VALIDATION: If a required (*) cell is empty, we throw that row away.
                     if (requiredCols[j] && value.isEmpty()) {
                         skipRow = true;
                     }
                 }
 
-                // Only keep rows that have all required fields filled
+                // If the row is valid, add it to our "Truck" (tempData) to be delivered to the test.
                 if (!skipRow) {
                     tempData[index][0] = rowMap;
                     index++;
                 }
             }
 
-            // 5️⃣ Final result + debug log
             System.out.println("=== DataProvider FINISHED for '" + sheetName
                     + "' → Loaded " + index + " valid row(s) ===\n");
 
-            // Return only the valid rows (no empty slots)
+            // 6️⃣ CLEAN UP THE PACKAGE
+            // We resize the array to remove any empty slots from skipped rows.
             Object[][] finalData = new Object[index][1];
             System.arraycopy(tempData, 0, finalData, 0, index);
 
             return finalData;
 
         } finally {
-            // 🔥 CRITICAL: Always close Excel to free memory
-            // This is what makes Sheet2 work after Sheet1!
+            // 🔐 ALWAYS CLOSE: Even if the code crashes, we close the Excel file.
             excel.close();
         }
     }
