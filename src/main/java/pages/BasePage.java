@@ -8,6 +8,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.asserts.SoftAssert; // Added this
+import utils.ConfigReader;
 import utils.ExtentManager;
 
 import java.time.Duration;
@@ -22,7 +23,8 @@ public class BasePage {
 
     public BasePage(WebDriver driver) {
         this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        int timeout = Integer.parseInt(ConfigReader.getProperty("timeout"));
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(timeout));
     }
 
     /**

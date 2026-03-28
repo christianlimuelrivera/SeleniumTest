@@ -36,7 +36,7 @@ public class Main {
         String testName = method.getName();
         if (testData.length > 0 && testData[0] instanceof Map) {
             Map<String, String> map = (Map<String, String>) testData[0];
-            testName += " - " + map.getOrDefault("UserName", "DataRow");
+            testName += " - " + map.getOrDefault("FirstName", "DataRow");
         }
 
         ExtentTest currentTest = ExtentManager.getInstance().createTest(testName);
@@ -105,6 +105,8 @@ public class Main {
         }
         driver.remove();
         ExtentManager.removeTest();
-        ExtentManager.getInstance().flush();
+        synchronized (ExtentManager.class) {
+            ExtentManager.getInstance().flush();
+        }
     }
 }

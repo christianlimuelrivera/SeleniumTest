@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="Automation Suite" parallel="methods" thread-count="2">
+
+    <!-- ⚙️ Global Parameters: These can be read via ConfigReader or System.getProperty() -->
+    <parameter name="browser" value="chrome"/>
+    <parameter name="headless" value="false"/>
+
+<!--    &lt;!&ndash; 🔐 Login Tests &ndash;&gt;-->
+<!--    <test name="Login Tests">-->
+<!--        <classes>-->
+<!--            <class name="Examples.LoginTest">-->
+<!--                <methods>-->
+<!--                    <include name="loginTestSheet1"/>-->
+<!--                    <include name="loginTestSheet2"/>-->
+<!--                </methods>-->
+<!--            </class>-->
+<!--        </classes>-->
+<!--    </test>-->
+
+    <!-- 📝 Form Tests -->
+    <test name="Form Tests">
+        <classes>
+            <class name="Examples.FormTest">
+                <methods>
+                    <include name="FormTest"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+
+</suite>

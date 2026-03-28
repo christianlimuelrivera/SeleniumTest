@@ -23,7 +23,7 @@ public class ExtentManager {
      * 🏗️ GET INSTANCE: Setup the physical report file.
      * It only creates the file ONCE per test run (Singleton pattern).
      */
-    public static ExtentReports getInstance() {
+    public static synchronized ExtentReports getInstance() {
         if (extent == null) {
             // 1️⃣ Decide where the report lives (Reports folder) and what it's named.
             ExtentSparkReporter spark = new ExtentSparkReporter("Reports/AutomationReport.html");

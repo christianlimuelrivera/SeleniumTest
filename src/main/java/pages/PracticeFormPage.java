@@ -71,7 +71,7 @@ public class PracticeFormPage extends BasePage {
         click(pracformsbtn);
     }
 
-    public void fillAndSubmit(String Fname, String Lname, String Useremail, String Usernumber, String Dob, String genderData) {
+    public void fillAndSubmit(String Fname, String Lname, String Useremail,String genderData, String Usernumber, String Dob) {
         sendKeys(fname, Fname);
         sendKeys(lname, Lname);
         sendKeys(email, Useremail);

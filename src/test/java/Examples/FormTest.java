@@ -12,7 +12,7 @@ public class FormTest extends Main {
 
     @SheetName("Forms")
     @Test(dataProvider = "excelDataProviderMapAnnotation", dataProviderClass = utils.DataProviderUtil.class)
-    public void loginTestSheet1(Map<String, String> row) {
+    public void FormTest(Map<String, String> row) {
         // 1. Initialize the Page Object
         PracticeFormPage practiceForm = new PracticeFormPage(getDriver());
 
@@ -28,7 +28,7 @@ public class FormTest extends Main {
 
         // 3. Action: Navigate and Fill the Form
         practiceForm.openForm();
-        practiceForm.fillAndSubmit(firstname, lastname, email, usernumber, dateofbirth, gender);
+        practiceForm.fillAndSubmit(firstname, lastname, email,gender, usernumber, dateofbirth);
 
         // 4. SOFT ASSERTIONS: Validate every element on the result screen
         // These will only show up in the report/console if they FAIL.
@@ -40,6 +40,8 @@ public class FormTest extends Main {
 
         // 5. Logging Success to Extent Report
         ExtentManager.getTest().pass("Form Validation completed for row: " );
+
+        practiceForm.assertAll();
 
     }
     }
