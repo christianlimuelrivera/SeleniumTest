@@ -51,6 +51,9 @@ public class PracticeFormPage extends BasePage {
     @FindBy(id = "city")
     WebElement cityDropdown;
 
+    @FindBy(xpath = "//label[contains(@for,'hobbies-checkbox')]")
+    private List<WebElement> hobbiesCheckboxes;
+
     // --- RESULT TABLE LOCATORS (For Assertions) ---
     // Logic: Find the row with 'Student Name', then get the cell next to it
     @FindBy(xpath = "//td[text()='Student Name']/following-sibling::td")
@@ -71,10 +74,13 @@ public class PracticeFormPage extends BasePage {
     @FindBy(xpath = "//td[text()='Picture']/following-sibling::td")
     private WebElement fileResult;
 
-    @FindBy(xpath = "//td[text()='Picture']/following-sibling::td")
+    @FindBy(xpath = "//td[text()='Hobbies']/following-sibling::td")
+    private WebElement hobbiesResult;
+
+    @FindBy(xpath = "//td[text()='State and City']/following-sibling::td")
     private WebElement stateResult;
 
-    @FindBy(xpath = "//td[text()='Picture']/following-sibling::td")
+    @FindBy(xpath = "//td[text()='State and City']/following-sibling::td")
     private WebElement cityResult;
 
     // --- GETTERS (To bridge to FormTest) ---
@@ -83,11 +89,12 @@ public class PracticeFormPage extends BasePage {
     public WebElement getGenderResult() { return genderResult; }
     public WebElement getPhoneResult() { return phoneResult; }
     public WebElement getDobResult() { return dobResult; }
+    public WebElement getHobbiesResult() { return hobbiesResult; }
     public WebElement getfileResult() { return fileResult; }
     public WebElement getStateResult() { return stateResult; }
     public WebElement getCityResult() { return cityResult; }
     // --- ACTIONS ---
-    public void fillAndSubmit(String Fname, String Lname, String Useremail,String genderData, String Usernumber, String Dob,String filePath,String state,String city) {
+    public void fillAndSubmit(String Fname, String Lname, String Useremail,String genderData, String Usernumber, String Dob,String hobbies,String filePath,String state,String city) {
         click(formsbtn);
         click(pracformsbtn);
         sendKeys(fname, Fname);
@@ -99,6 +106,7 @@ public class PracticeFormPage extends BasePage {
 
         sendKeys(usernumber, Usernumber);
         typeDate(dateofbirth, Dob); // Uncomment when ready to test dates
+        selectCheckboxes(hobbiesCheckboxes, hobbies);
         uploadFile(fileInput, filePath);
         // Select state first
         selectReactDropdown(stateDropdown, state);

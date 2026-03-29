@@ -153,6 +153,23 @@ public class BasePage {
             throw new RuntimeException("Dropdown selection failed: " + e.getMessage());
         }
     }
+    protected void selectCheckboxes(List<WebElement> options, String valuesFromExcel) {
+        String[] values = valuesFromExcel.split(",");
+
+        for (WebElement option : options) {
+            for (String value : values) {
+                // Try matching by label text first, then fall back to value attribute
+                boolean matchesText = option.getText().equalsIgnoreCase(value.trim());
+                boolean matchesValue = option.getAttribute("value") != null &&
+                        option.getAttribute("value").equalsIgnoreCase(value.trim());
+
+                if (matchesText || matchesValue) {
+                    click(option);
+                }
+            }
+        }
+        ExtentManager.getTest().log(Status.INFO, "Selected checkboxes: " + valuesFromExcel);
+    }
 
     protected void pause(int seconds) {
         try {

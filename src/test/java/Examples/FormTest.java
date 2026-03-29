@@ -23,14 +23,15 @@ public class FormTest extends Main {
         String gender = row.get("Gender");
         String usernumber = row.get("UserNumber");
         String dateofbirth = row.get("DateOfBirth");
+        String hobbies = row.get("Hobbies");
         String filePath = row.get("fileInput");
         String state = row.get("State");
         String city = row.get("City");
         ExtentManager.getTest().log(Status.INFO, "Testing Forms for: " + firstname + " " + lastname);
 
-        // 3. Action: Navigate and Fill the Form
-        practiceForm.openForm();
-        practiceForm.fillAndSubmit(firstname, lastname, email,gender, usernumber, dateofbirth,filePath,state,city);
+
+
+        practiceForm.fillAndSubmit(firstname, lastname, email,gender, usernumber, dateofbirth,hobbies,filePath,state,city);
 
         // 4. SOFT ASSERTIONS: Validate every element on the result screen
         // These will only show up in the report/console if they FAIL.
@@ -39,9 +40,10 @@ public class FormTest extends Main {
         practiceForm.softAssertVisible(practiceForm.getGenderResult(), "Result Gender: " + gender);
         practiceForm.softAssertVisible(practiceForm.getPhoneResult(), "Result Phone: " + usernumber);
         practiceForm.softAssertVisible(practiceForm.getDobResult(), "Result DOB: " + dateofbirth);
+        practiceForm.softAssertVisible(practiceForm.getHobbiesResult(), "Result Hobbies: " + hobbies);
         practiceForm.softAssertVisible(practiceForm.getfileResult(), "Result FileInput: " + filePath);
-        practiceForm.softAssertVisible(practiceForm.getStateResult(), "Result State: " + state);
-        practiceForm.softAssertVisible(practiceForm.getCityResult(), "Result City: " + city);
+        practiceForm.softAssertVisible(practiceForm.getStateResult(), "Result State and City: " + state +" "+ city);
+
 
         // 5. Logging Success to Extent Report
         ExtentManager.getTest().pass("Form Validation completed for row: " );
