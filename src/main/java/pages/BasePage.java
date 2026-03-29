@@ -1,16 +1,14 @@
 package pages;
 
 import com.aventstack.extentreports.Status;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.asserts.SoftAssert; // Added this
 import utils.ConfigReader;
 import utils.ExtentManager;
 
+import java.io.File;
 import java.time.Duration;
 import java.util.List;
 
@@ -116,6 +114,43 @@ public class BasePage {
                 }
                 break;
             }
+        }
+    }
+
+    protected void uploadFile(WebElement element, String filePath) {
+        try {
+
+            File file = new File(filePath);
+            String absolutePath = file.getAbsolutePath();
+
+            element.sendKeys(absolutePath);
+            ExtentManager.getTest().log(Status.INFO, "File uploaded: " + absolutePath);
+
+
+        } catch (Exception e) {
+            ExtentManager.getTest().log(Status.FAIL, "File upload failed: " + filePath);
+            throw new RuntimeException("File upload failed: " + e.getMessage());
+        }
+    }
+
+    protected void selectReactDropdown(WebElement element, String value) {
+        try {
+            // 1. Click to open the dropdown
+            click(element);
+
+            // 2. Find the input inside the dropdown and type the value
+            WebElement input = element.findElement(By.tagName("input"));
+            input.sendKeys(value);
+
+            // 3. Wait for the option to appear in the list and click it
+            WebElement option = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.xpath("//div[contains(@class,'option') and text()='" + value + "']")));
+            option.click();
+
+            ExtentManager.getTest().log(Status.INFO, "Selected from dropdown: " + value);
+        } catch (Exception e) {
+            ExtentManager.getTest().log(Status.FAIL, "Dropdown selection failed: " + value);
+            throw new RuntimeException("Dropdown selection failed: " + e.getMessage());
         }
     }
 
