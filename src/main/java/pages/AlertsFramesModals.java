@@ -35,6 +35,22 @@ public class AlertsFramesModals extends BasePage {
     @FindBy(id = "sampleHeading")
     private WebElement sampleHeading;
 
+    @FindBy(xpath = "//a[@href='/alerts']")
+    private WebElement AlertsMenu;
+
+    @FindBy(id = "alertButton")
+    private WebElement Alertsbtn;
+
+    @FindBy(id = "timerAlertButton")
+    private WebElement AlertsTimerbtn;
+
+    @FindBy(id = "confirmButton")
+    private WebElement AlertsConfirmbtn;
+
+    @FindBy(id = "promtButton")
+    private WebElement AlertsPromptbtn;
+
+
     // ============================================================
     // CLASS VARIABLE
     // Stores the original tab handle for switching back after
@@ -108,4 +124,37 @@ public class AlertsFramesModals extends BasePage {
         // Close new window and return to original
         closeCurrentAndSwitchBack(originalTab);
     }
+    public String clickAlertAndAccept() {
+        click(Alertsform);
+        click(AlertsMenu);
+        click(Alertsbtn);
+        String alertText = getAlertText();
+        acceptAlert();
+        return alertText;
+    }
+
+    public String clickTimerAlert() {
+        click(AlertsTimerbtn);
+        // acceptAlert() already waits up to 20 seconds — handles delayed alerts too!
+        String alertText = getAlertText();
+        acceptAlert();
+        return alertText;
+    }
+
+    public String clickConfirmAlert() {
+        click(AlertsConfirmbtn);
+        // acceptAlert() already waits up to 20 seconds — handles delayed alerts too!
+        String alertText = getAlertText();
+        dismissAlert();
+        return alertText;
+    }
+
+    public void clickPromptAlert(String text) {
+        click(AlertsPromptbtn);
+        // acceptAlert() already waits up to 20 seconds — handles delayed alerts too!
+        typeInAlert(text);
+
+
+    }
+
 }

@@ -11,7 +11,7 @@ import utils.ExtentManager;
 import java.io.File;
 import java.time.Duration;
 import java.util.List;
-
+import org.openqa.selenium.Alert;
 public class BasePage {
 
     protected WebDriver driver;
@@ -261,6 +261,68 @@ public class BasePage {
      */
     protected String getCurrentWindowHandle() {
         return driver.getWindowHandle();
+    }
+    // ============================================================
+// ALERT HANDLING
+// ============================================================
+
+    /**
+     * Waits for an alert to appear and accepts it (clicks OK).
+     */
+    protected void acceptAlert() {
+        try {
+            wait.until(ExpectedConditions.alertIsPresent());
+            driver.switchTo().alert().accept();
+            ExtentManager.getTest().log(Status.INFO, "Alert accepted");
+        } catch (Exception e) {
+            ExtentManager.getTest().log(Status.FAIL, "Alert not found");
+            throw new RuntimeException("acceptAlert() failed: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Waits for an alert and dismisses it (clicks Cancel).
+     */
+    protected void dismissAlert() {
+        try {
+            wait.until(ExpectedConditions.alertIsPresent());
+            driver.switchTo().alert().dismiss();
+            ExtentManager.getTest().log(Status.INFO, "Alert dismissed");
+        } catch (Exception e) {
+            ExtentManager.getTest().log(Status.FAIL, "Alert not found");
+            throw new RuntimeException("dismissAlert() failed: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Gets the text from an alert without closing it.
+     */
+    protected String getAlertText() {
+        try {
+            wait.until(ExpectedConditions.alertIsPresent());
+            String text = driver.switchTo().alert().getText();
+            ExtentManager.getTest().log(Status.INFO, "Alert text: " + text);
+            return text;
+        } catch (Exception e) {
+            ExtentManager.getTest().log(Status.FAIL, "Could not get alert text");
+            throw new RuntimeException("getAlertText() failed: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Types text into a prompt alert then accepts it.
+     */
+    protected void typeInAlert(String text) {
+        try {
+            wait.until(ExpectedConditions.alertIsPresent());
+            Alert alert = driver.switchTo().alert();
+            alert.sendKeys(text);
+            alert.accept();
+            ExtentManager.getTest().log(Status.INFO, "Typed in alert: " + text);
+        } catch (Exception e) {
+            ExtentManager.getTest().log(Status.FAIL, "Could not type in alert");
+            throw new RuntimeException("typeInAlert() failed: " + e.getMessage());
+        }
     }
 
     // ============================================================
