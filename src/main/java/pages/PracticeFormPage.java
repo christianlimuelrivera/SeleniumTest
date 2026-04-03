@@ -5,6 +5,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import java.util.List;
+import java.util.Map;
 
 public class PracticeFormPage extends BasePage {
 
@@ -94,26 +95,40 @@ public class PracticeFormPage extends BasePage {
     public WebElement getStateResult() { return stateResult; }
     public WebElement getCityResult() { return cityResult; }
     // --- ACTIONS ---
-    public void fillAndSubmit(String Fname, String Lname, String Useremail,String genderData, String Usernumber, String Dob,String hobbies,String filePath,String state,String city) {
+    public void fillAndSubmit(Map<String, String> row) {
+
+        // --- EXTRACT DATA FROM MAP ---
+        String firstname   = row.get("FirstName");
+        String lastname    = row.get("LastName");
+        String userEmail   = row.get("Email");
+        String gender      = row.get("Gender");
+        String userNumber  = row.get("UserNumber");
+        String dob         = row.get("DateOfBirth");
+        String hobbies     = row.get("Hobbies");
+        String filePath    = row.get("fileInput");
+        String state       = row.get("State");
+        String city        = row.get("City");
+
+        // --- NAVIGATE TO FORM ---
         click(formsbtn);
         click(pracformsbtn);
-        sendKeys(fname, Fname);
-        sendKeys(lname, Lname);
-        sendKeys(email, Useremail);
 
-        // Use our smart radio button selection
-        selectRadioButtonByValue(genderOptions, genderData);
-
-        sendKeys(usernumber, Usernumber);
-        typeDate(dateofbirth, Dob); // Uncomment when ready to test dates
+        // --- FILL FORM FIELDS ---
+        sendKeys(fname, firstname);
+        sendKeys(lname, lastname);
+        sendKeys(email, userEmail);
+        selectRadioButtonByValue(genderOptions, gender);
+        sendKeys(usernumber, userNumber);
+        typeDate(dateofbirth, dob);
         selectCheckboxes(hobbiesCheckboxes, hobbies);
         uploadFile(fileInput, filePath);
-        // Select state first
-        selectReactDropdown(stateDropdown, state);
 
-        // City is enabled only after state is selected
+        // --- DROPDOWNS ---
+        // State must be selected before City becomes enabled
+        selectReactDropdown(stateDropdown, state);
         selectReactDropdown(cityDropdown, city);
-        // 🚀 CRITICAL: We must submit for the result table to appear!
+
+        // --- SUBMIT ---
         click(submitBtn);
     }
 }

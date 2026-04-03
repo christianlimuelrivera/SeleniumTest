@@ -13,42 +13,39 @@ public class FormTest extends Main {
     @SheetName("Forms")
     @Test(dataProvider = "excelDataProviderMapAnnotation", dataProviderClass = utils.DataProviderUtil.class)
     public void FormTest(Map<String, String> row) {
-        // 1. Initialize the Page Object
+
+        // STEP 1: INITIALIZE PAGE OBJECT
         PracticeFormPage practiceForm = new PracticeFormPage(getDriver());
 
-        // 2. Extract Data from Excel
-        String firstname = row.get("FirstName");
-        String lastname = row.get("LastName");
-        String email = row.get("Email");
-        String gender = row.get("Gender");
-        String usernumber = row.get("UserNumber");
-        String dateofbirth = row.get("DateOfBirth");
-        String hobbies = row.get("Hobbies");
-        String filePath = row.get("fileInput");
-        String state = row.get("State");
-        String city = row.get("City");
-        ExtentManager.getTest().log(Status.INFO, "Testing Forms for: " + firstname + " " + lastname);
+        // STEP 2: LOG TEST START
+        ExtentManager.getTest().log(Status.INFO,
+                "Testing Forms for: " + row.get("FirstName") + " " + row.get("LastName"));
 
+        // STEP 3: NAVIGATE AND FILL THE FORM
+        practiceForm.fillAndSubmit(row);
 
+        // STEP 4: SOFT ASSERTIONS
+        practiceForm.softAssertVisible(practiceForm.getNameResult(),
+                "Result Name: " + row.get("FirstName") + " " + row.get("LastName"));
+        practiceForm.softAssertVisible(practiceForm.getEmailResult(),
+                "Result Email: " + row.get("Email"));
+        practiceForm.softAssertVisible(practiceForm.getGenderResult(),
+                "Result Gender: " + row.get("Gender"));
+        practiceForm.softAssertVisible(practiceForm.getPhoneResult(),
+                "Result Phone: " + row.get("UserNumber"));
+        practiceForm.softAssertVisible(practiceForm.getDobResult(),
+                "Result DOB: " + row.get("DateOfBirth"));
+        practiceForm.softAssertVisible(practiceForm.getHobbiesResult(),
+                "Result Hobbies: " + row.get("Hobbies"));
+        practiceForm.softAssertVisible(practiceForm.getfileResult(),
+                "Result FileInput: " + row.get("fileInput"));
+        practiceForm.softAssertVisible(practiceForm.getStateResult(),
+                "Result State and City: " + row.get("State") + " " + row.get("City"));
 
-        practiceForm.fillAndSubmit(firstname, lastname, email,gender, usernumber, dateofbirth,hobbies,filePath,state,city);
-
-        // 4. SOFT ASSERTIONS: Validate every element on the result screen
-        // These will only show up in the report/console if they FAIL.
-        practiceForm.softAssertVisible(practiceForm.getNameResult(), "Result Name: " + firstname + " " + lastname);
-        practiceForm.softAssertVisible(practiceForm.getEmailResult(), "Result Email: " + email);
-        practiceForm.softAssertVisible(practiceForm.getGenderResult(), "Result Gender: " + gender);
-        practiceForm.softAssertVisible(practiceForm.getPhoneResult(), "Result Phone: " + usernumber);
-        practiceForm.softAssertVisible(practiceForm.getDobResult(), "Result DOB: " + dateofbirth);
-        practiceForm.softAssertVisible(practiceForm.getHobbiesResult(), "Result Hobbies: " + hobbies);
-        practiceForm.softAssertVisible(practiceForm.getfileResult(), "Result FileInput: " + filePath);
-        practiceForm.softAssertVisible(practiceForm.getStateResult(), "Result State and City: " + state +" "+ city);
-
-
-        // 5. Logging Success to Extent Report
-        ExtentManager.getTest().pass("Form Validation completed for row: " );
+        // STEP 5: LOG SUCCESS AND FINALIZE
+        ExtentManager.getTest().pass("Form Validation completed for: "
+                + row.get("FirstName") + " " + row.get("LastName"));
 
         practiceForm.assertAll();
-
     }
-    }
+}
