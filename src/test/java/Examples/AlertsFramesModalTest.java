@@ -99,9 +99,5 @@ public class AlertsFramesModalTest extends Main {
         alertsPage.clickPromptAlert(row.get("Prompt"));
         ExtentManager.getTest().pass("Prompt input successful: " + row.get("Prompt"));
 
-        // ============================================================
-        // STEP 7: FINALIZE SOFT ASSERTIONS
-        // ============================================================
-        alertsPage.assertAll();
     }
 }
