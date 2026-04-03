@@ -90,8 +90,8 @@ public class AlertsFramesModalTest extends Main {
         // STEP 5: CONFIRM ALERT
         // Clicks confirm button and dismisses the alert
         // ============================================================
-        alertsPage.clickConfirmAlert();
-
+        String confirmText = alertsPage.clickConfirmAlert();
+        ExtentManager.getTest().log(Status.INFO, "Timer Alert text: " + confirmText);
         // ============================================================
         // STEP 6: PROMPT ALERT
         // Types text from Excel into the prompt alert and accepts it

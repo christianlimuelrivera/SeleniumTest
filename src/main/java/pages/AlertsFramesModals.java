@@ -135,7 +135,6 @@ public class AlertsFramesModals extends BasePage {
 
     public String clickTimerAlert() {
         click(AlertsTimerbtn);
-        // acceptAlert() already waits up to 20 seconds — handles delayed alerts too!
         String alertText = getAlertText();
         acceptAlert();
         return alertText;
@@ -143,7 +142,6 @@ public class AlertsFramesModals extends BasePage {
 
     public String clickConfirmAlert() {
         click(AlertsConfirmbtn);
-        // acceptAlert() already waits up to 20 seconds — handles delayed alerts too!
         String alertText = getAlertText();
         dismissAlert();
         return alertText;
@@ -151,7 +149,6 @@ public class AlertsFramesModals extends BasePage {
 
     public void clickPromptAlert(String text) {
         click(AlertsPromptbtn);
-        // acceptAlert() already waits up to 20 seconds — handles delayed alerts too!
         typeInAlert(text);
 
 
