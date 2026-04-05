@@ -6,7 +6,9 @@
     <!-- ⚙️ Global Parameters: These can be read via ConfigReader or System.getProperty() -->
     <parameter name="browser" value="chrome"/>
     <parameter name="headless" value="false"/>
-
+    <listeners>
+        <listener class-name="utils.SuiteListener"/>
+    </listeners>
 <!--    &lt;!&ndash; 🔐 Login Tests &ndash;&gt;-->
 <!--    <test name="Login Tests">-->
 <!--        <classes>-->

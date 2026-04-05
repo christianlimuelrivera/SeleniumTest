@@ -2,6 +2,7 @@ package pages;
 
 import com.aventstack.extentreports.Status;
 import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.asserts.SoftAssert;
@@ -10,7 +11,10 @@ import utils.ExtentManager;
 
 import java.io.File;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.openqa.selenium.Alert;
 public class BasePage {
 
@@ -18,7 +22,7 @@ public class BasePage {
     protected WebDriverWait wait;
 
     // 🧵 Thread-safe SoftAssert: Keeps error logs separate for each parallel test.
-    protected static ThreadLocal<SoftAssert> softAssert = ThreadLocal.withInitial(SoftAssert::new);
+    protected ThreadLocal<SoftAssert> softAssert = ThreadLocal.withInitial(SoftAssert::new);
 
     // ============================================================
     // CONSTRUCTOR
@@ -388,6 +392,74 @@ public class BasePage {
         } catch (Exception e) {
             ExtentManager.getTest().log(Status.FAIL, "Could not switch to parent frame");
             throw new RuntimeException("switchToParentFrame() failed: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Reads a row from either a standard HTML table or React table.
+     * Automatically detects the table type and handles accordingly.
+     * Excludes the last column (Action column).
+     *
+     * @param searchBox  the search input element
+     * @param searchTerm the value to search for (e.g. First Name)
+     * @return Map of header → cell value
+     */
+    protected Map<String, String> getTableRow(WebElement searchBox, String searchTerm) {
+        try {
+            sendKeys(searchBox, searchTerm);
+            pause(1);
+            List<WebElement> headers;
+            List<WebElement> cells;
+
+            // Auto-detect table type
+            boolean isStandardTable = !driver.findElements(
+                    By.xpath("//thead//th")).isEmpty();
+
+            if (isStandardTable) {
+                // Standard HTML table
+                ExtentManager.getTest().log(Status.INFO, "Detected standard HTML table");
+                headers = driver.findElements(By.xpath("//thead//th"));
+                cells = driver.findElements(
+                        By.xpath("//tbody//tr[.//td[text()='" + searchTerm + "']]//td"));
+            } else {
+                // React table
+                ExtentManager.getTest().log(Status.INFO, "Detected React table");
+                headers = driver.findElements(
+                        By.xpath("//div[contains(@class,'rt-th')]"));
+                cells = driver.findElements(
+                        By.xpath("//div[@class='rt-tr' and .//div[text()='"
+                                + searchTerm + "']]//div[@class='rt-td']"));
+            }
+
+            // Map headers to cells dynamically
+            Map<String, String> rowData = new HashMap<>();
+            for (int i = 0; i < headers.size() - 1; i++) { // -1 excludes Action column
+                rowData.put(getText(headers.get(i)), getText(cells.get(i)));
+            }
+
+            ExtentManager.getTest().log(Status.INFO,
+                    "Retrieved table row for: " + searchTerm);
+            return rowData;
+
+        } catch (Exception e) {
+            ExtentManager.getTest().log(Status.FAIL, "Could not read table row");
+            throw new RuntimeException("getTableRow() failed: " + e.getMessage());
+        }
+    }
+
+    protected void hoverAndClick(WebElement element) {
+        try {
+            Actions actions = new Actions(driver);
+            actions.moveToElement(element).click().perform();
+            ExtentManager.getTest().log(Status.INFO, "Hover-clicked element");
+        } catch (Exception e) {
+            // Fallback to JS click if Actions fails
+            ExtentManager.getTest().log(Status.WARNING,
+                    "Actions click failed, falling back to JS click");
+            ((JavascriptExecutor) driver).executeScript(
+                    "arguments[0].scrollIntoView(true);", element);
+            ((JavascriptExecutor) driver).executeScript(
+                    "arguments[0].click();", element);
         }
     }
 

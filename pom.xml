@@ -80,7 +80,6 @@
                     <includes>
                         <include>**/*Test.java</include>
                         <include>**/*Tests.java</include>
-                        <include>**/Main.java</include>
                     </includes>
                     <parallel>methods</parallel>
                     <threadCount>${threads}</threadCount>
