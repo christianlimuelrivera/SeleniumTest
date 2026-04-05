@@ -117,29 +117,33 @@ public class Main {
 
     @AfterMethod
     public void teardown(ITestResult result) {
-
-        // ============================================================
-        // 4. TEARDOWN & FAILURE SCREENSHOTS
-        // ============================================================
+        // 1. Check if the driver exists before doing anything
         if (getDriver() != null) {
+
+            // Handle FAILURES
             if (result.getStatus() == ITestResult.FAILURE) {
-                // Capture Base64 screenshot to embed directly in the HTML report (No broken image links)
                 String base64 = ((TakesScreenshot) getDriver()).getScreenshotAs(OutputType.BASE64);
                 ExtentManager.getTest().log(Status.FAIL, "Test Failed: " + result.getThrowable());
                 ExtentManager.getTest().addScreenCaptureFromBase64String(base64, "Failure Screenshot");
-            } else if (result.getStatus() == ITestResult.SUCCESS) {
+            }
+
+            // Handle SKIPS (This is what your RetryAnalyzer triggers)
+            else if (result.getStatus() == ITestResult.SKIP) {
+                ExtentManager.getTest().log(Status.SKIP, "Test Retrying/Skipped: " + result.getThrowable());
+            }
+
+            // Handle SUCCESS
+            else if (result.getStatus() == ITestResult.SUCCESS) {
                 ExtentManager.getTest().log(Status.PASS, "Test execution successful.");
             }
 
-            // Safely close the browser
+            // 2. Safely close the browser after logging is done
             getDriver().quit();
         }
 
-        // ============================================================
-        // 5. THREAD CLEANUP
-        // ============================================================
-        // Crucial: removes the driver and test from memory to prevent leaks in subsequent tests
+        // 3. THREAD CLEANUP (Always outside the getDriver() check to be safe)
+        // This ensures the thread is wiped even if the driver failed to start
         driver.remove();
         ExtentManager.removeTest();
     }
-}
+    }

@@ -2,16 +2,19 @@ package Examples;
 
 import base.Main;
 import com.aventstack.extentreports.Status;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.PracticeFormPage;
 import utils.ExtentManager;
+import utils.RetryAnalyzer;
 import utils.SheetName;
 import java.util.Map;
 
 public class FormTest extends Main {
 
     @SheetName("Forms")
-    @Test(dataProvider = "excelDataProviderMapAnnotation", dataProviderClass = utils.DataProviderUtil.class)
+    @Test(dataProvider = "excelDataProviderMapAnnotation", dataProviderClass = utils.DataProviderUtil.class,
+            retryAnalyzer = RetryAnalyzer.class)
     public void FormTest(Map<String, String> row) {
 
         // STEP 1: INITIALIZE PAGE OBJECT
@@ -27,6 +30,9 @@ public class FormTest extends Main {
         // STEP 4: SOFT ASSERTIONS
         practiceForm.softAssertVisible(practiceForm.getNameResult(),
                 "Result Name: " + row.get("FirstName") + " " + row.get("LastName"));
+
+      // Uncomment if you want to test the Retry
+//        Assert.assertEquals(row.get("FirstName"), "Zoro", "INTENTIONAL LOGIC FAILURE FOR TESTING RETRY");
         practiceForm.softAssertVisible(practiceForm.getEmailResult(),
                 "Result Email: " + row.get("Email"));
         practiceForm.softAssertVisible(practiceForm.getGenderResult(),

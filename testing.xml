@@ -8,6 +8,7 @@
     <parameter name="headless" value="false"/>
     <listeners>
         <listener class-name="utils.SuiteListener"/>
+        <listener class-name="utils.RetryAnnotationTransformer"/>
     </listeners>
 <!--    &lt;!&ndash; 🔐 Login Tests &ndash;&gt;-->
 <!--    <test name="Login Tests">-->
