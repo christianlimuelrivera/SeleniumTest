@@ -60,7 +60,7 @@ public class AlertsFramesModalTest extends Main {
     @Test(dataProvider = "excelDataProviderMapAnnotation",
             dataProviderClass = utils.DataProviderUtil.class,
             priority = 2)
-    public void AlertsTypes(Map<String, String> row) {
+    public void AlertsTypesAnd(Map<String, String> row) {
 
         // ============================================================
         // STEP 1: INITIALIZE PAGE OBJECT
@@ -100,4 +100,61 @@ public class AlertsFramesModalTest extends Main {
         ExtentManager.getTest().pass("Prompt input successful: " + row.get("Prompt"));
 
     }
-}
+
+    @SheetName("Alerts")
+    @Test(dataProvider = "excelDataProviderMapAnnotation",
+            dataProviderClass = utils.DataProviderUtil.class,
+            priority = 2)
+    public void FramesandNestedframes(Map<String, String> row) {
+        // ============================================================
+        // STEP 1: INITIALIZE PAGE OBJECT
+        // ============================================================
+        AlertsFramesModals framesPage = new AlertsFramesModals(getDriver());
+
+
+        framesPage.navigateToFrames();
+// Frame 1
+        String frame1Text = framesPage.getFrameText("frame1");
+        Assert.assertEquals(frame1Text, row.get("FrameText"), "Frame 1 text mismatch!");
+
+// Frame 2
+        String frame2Text = framesPage.getFrameText("frame2");
+        Assert.assertEquals(frame2Text, row.get("FrameText"), "Frame 2 text mismatch!");
+        framesPage.assertAll();
+    }
+    @SheetName("Alerts")
+    @Test(dataProvider = "excelDataProviderMapAnnotation",
+            dataProviderClass = utils.DataProviderUtil.class,
+            priority = 3)
+    public void Modals(Map<String, String> row) {
+
+        // ============================================================
+        // STEP 1: INITIALIZE PAGE OBJECT
+        // ============================================================
+        AlertsFramesModals modalPage = new AlertsFramesModals(getDriver());
+
+        // ============================================================
+        // STEP 2: LOG TEST START
+        // ============================================================
+        ExtentManager.getTest().log(Status.INFO, "Testing Small and Large Modals");
+
+        // ============================================================
+        // STEP 3: NAVIGATE AND HANDLE MODALS
+        // Returns Map with smallBody and largeBody text
+        // ============================================================
+        modalPage.navigateToModal();
+        Map<String, String> modalData = modalPage.handleModals();
+
+        // ============================================================
+        // STEP 4: ASSERTIONS
+        // ============================================================
+        Assert.assertEquals(modalData.get("smallBody"),
+                row.get("SmallModalBody"),
+                "Small modal text mismatch!");
+
+        Assert.assertEquals(modalData.get("largeBody"),
+                row.get("LargeModalBody"),
+                "Large modal text mismatch!");
+
+    }
+    }

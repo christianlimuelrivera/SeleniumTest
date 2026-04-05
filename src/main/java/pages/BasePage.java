@@ -196,7 +196,13 @@ public class BasePage {
      */
     protected String getText(WebElement element) {
         try {
+            // First check if element is displayed
+            // This acts as an extra wait for animations to complete
+            isDisplayed(element);
+
+            // Then wait for visibility
             wait.until(ExpectedConditions.visibilityOf(element));
+
             String text = element.getText();
 
             if (text == null || text.isEmpty()) {
@@ -209,6 +215,7 @@ public class BasePage {
 
             ExtentManager.getTest().log(Status.INFO, "Got text: " + text);
             return text;
+
         } catch (Exception e) {
             ExtentManager.getTest().log(Status.FAIL, "Could not get text from element");
             throw new RuntimeException("getText() failed: " + e.getMessage());
@@ -322,6 +329,65 @@ public class BasePage {
         } catch (Exception e) {
             ExtentManager.getTest().log(Status.FAIL, "Could not type in alert");
             throw new RuntimeException("typeInAlert() failed: " + e.getMessage());
+        }
+    }
+
+    // ============================================================
+// IFRAME HANDLING
+// ============================================================
+
+    /**
+     * Switches into an iFrame by WebElement.
+     * Scrolls into view first to ensure frame is visible.
+     */
+    protected void switchToFrame(WebElement frameElement) {
+        try {
+            ((JavascriptExecutor) driver).executeScript(
+                    "arguments[0].scrollIntoView(true);", frameElement);
+            wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(frameElement));
+            ExtentManager.getTest().log(Status.INFO, "Switched into iFrame");
+        } catch (Exception e) {
+            ExtentManager.getTest().log(Status.FAIL, "Could not switch to iFrame");
+            throw new RuntimeException("switchToFrame() failed: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Switches into an iFrame by id or name attribute.
+     */
+    protected void switchToFrameById(String idOrName) {
+        try {
+            wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(idOrName));
+            ExtentManager.getTest().log(Status.INFO, "Switched into iFrame: " + idOrName);
+        } catch (Exception e) {
+            ExtentManager.getTest().log(Status.FAIL, "Could not switch to iFrame: " + idOrName);
+            throw new RuntimeException("switchToFrameById() failed: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Switches back to the main page from inside an iFrame.
+     */
+    protected void switchToDefaultContent() {
+        try {
+            driver.switchTo().defaultContent();
+            ExtentManager.getTest().log(Status.INFO, "Switched back to main page");
+        } catch (Exception e) {
+            ExtentManager.getTest().log(Status.FAIL, "Could not switch to default content");
+            throw new RuntimeException("switchToDefaultContent() failed: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Switches to parent frame from a nested iFrame.
+     */
+    protected void switchToParentFrame() {
+        try {
+            driver.switchTo().parentFrame();
+            ExtentManager.getTest().log(Status.INFO, "Switched to parent frame");
+        } catch (Exception e) {
+            ExtentManager.getTest().log(Status.FAIL, "Could not switch to parent frame");
+            throw new RuntimeException("switchToParentFrame() failed: " + e.getMessage());
         }
     }
 
