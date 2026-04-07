@@ -14,6 +14,7 @@ import java.util.Map;
 
 public class ElementsPage extends BasePage {
 
+
     public ElementsPage(WebDriver driver) {
         super(driver);
         PageFactory.initElements(driver, this);

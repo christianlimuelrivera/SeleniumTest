@@ -5,6 +5,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 import org.testng.asserts.SoftAssert;
 import utils.ConfigReader;
 import utils.ExtentManager;
@@ -217,7 +218,6 @@ public class BasePage {
                         .executeScript("return arguments[0].innerText;", element);
             }
 
-            ExtentManager.getTest().log(Status.INFO, "Got text: " + text);
             return text;
 
         } catch (Exception e) {
@@ -460,6 +460,28 @@ public class BasePage {
                     "arguments[0].scrollIntoView(true);", element);
             ((JavascriptExecutor) driver).executeScript(
                     "arguments[0].click();", element);
+        }
+    }
+
+    public void assertEqualsAndLog(Object actual, Object expected, String message) {
+        // 1. Convert everything to String to avoid Integer vs String mismatches
+        String actualStr = (actual == null) ? "null" : String.valueOf(actual);
+        String expectedStr = (expected == null) ? "null" : String.valueOf(expected);
+
+        try {
+            // 2. Perform the actual TestNG assertion
+            Assert.assertEquals(actualStr, expectedStr, message);
+
+            // 3. Log Success with a little bit of HTML formatting for the report
+            ExtentManager.getTest().log(Status.PASS,
+                    "<b>" + message + "</b> validated: " + expectedStr);
+
+        } catch (AssertionError e) {
+            // 4. Log Failure with clear details
+            ExtentManager.getTest().log(Status.FAIL,
+                    "<b>" + message + "</b> FAILED! <br>Expected: [" + expectedStr + "] <br>Actual: [" + actualStr + "]");
+
+            throw e; // Critical: still fails the TestNG test
         }
     }
 

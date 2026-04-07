@@ -6,13 +6,15 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.AlertsFramesModals;
 import utils.ExtentManager;
+import utils.RetryAnalyzer;
 import utils.SheetName;
 import java.util.Map;
 
 public class AlertsFramesModalTest extends Main {
 
     @SheetName("Alerts")
-    @Test(dataProvider = "excelDataProviderMapAnnotation", dataProviderClass = utils.DataProviderUtil.class,priority = 1)
+    @Test(dataProvider = "excelDataProviderMapAnnotation", dataProviderClass = utils.DataProviderUtil.class,priority = 1,
+            retryAnalyzer = RetryAnalyzer.class)
 
     public void NewTab(Map<String, String> row) {
 
@@ -59,7 +61,7 @@ public class AlertsFramesModalTest extends Main {
     @SheetName("Alerts")
     @Test(dataProvider = "excelDataProviderMapAnnotation",
             dataProviderClass = utils.DataProviderUtil.class,
-            priority = 2)
+            priority = 2,   retryAnalyzer = RetryAnalyzer.class)
     public void AlertsTypesAnd(Map<String, String> row) {
 
         // ============================================================
@@ -104,7 +106,7 @@ public class AlertsFramesModalTest extends Main {
     @SheetName("Alerts")
     @Test(dataProvider = "excelDataProviderMapAnnotation",
             dataProviderClass = utils.DataProviderUtil.class,
-            priority = 2)
+            priority = 2,   retryAnalyzer = RetryAnalyzer.class)
     public void FramesandNestedframes(Map<String, String> row) {
         // ============================================================
         // STEP 1: INITIALIZE PAGE OBJECT
@@ -125,7 +127,7 @@ public class AlertsFramesModalTest extends Main {
     @SheetName("Alerts")
     @Test(dataProvider = "excelDataProviderMapAnnotation",
             dataProviderClass = utils.DataProviderUtil.class,
-            priority = 3)
+            priority = 3,   retryAnalyzer = RetryAnalyzer.class)
     public void Modals(Map<String, String> row) {
 
         // ============================================================
