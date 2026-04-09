@@ -89,9 +89,8 @@ public class DBUtil {
      * SELECT: Finds a user by their email address.
      * This is the DB equivalent of searching the Web Table in the browser.
      */
-    public static Map<String, Object> getUserByEmail(String email) {
-        String sql = "SELECT * FROM WebUsers WHERE email = ?";
-
+    public static Map<String, Object> getUserByEmail(String tableName,String email) {
+        String sql = "SELECT * FROM " + tableName + " WHERE email = ?";
         try (Connection conn = DriverManager.getConnection(URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -163,7 +162,7 @@ public class DBUtil {
 
     /*
     public static void main(String[] args) {
-        String createTableSQL = "CREATE TABLE IF NOT EXISTS WebUsers (" +
+        String createTableSQL = "CREATE TABLE IF NOT EXISTS WebUsers & FormTest (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "firstName TEXT," +
                 "lastName TEXT," +

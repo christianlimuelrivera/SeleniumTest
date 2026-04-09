@@ -1,9 +1,13 @@
 package pages;
 
+import com.aventstack.extentreports.Status;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import utils.DBUtil;
+import utils.ExtentManager;
+
 import java.util.List;
 import java.util.Map;
 
@@ -117,6 +121,69 @@ public class PracticeFormPage extends BasePage {
         sendKeys(fname, firstname);
         sendKeys(lname, lastname);
         sendKeys(email, userEmail);
+        selectRadioButtonByValue(genderOptions, gender);
+        sendKeys(usernumber, userNumber);
+        typeDate(dateofbirth, dob);
+        selectCheckboxes(hobbiesCheckboxes, hobbies);
+        uploadFile(fileInput, filePath);
+
+        // --- DROPDOWNS ---
+        // State must be selected before City becomes enabled
+        selectReactDropdown(stateDropdown, state);
+        selectReactDropdown(cityDropdown, city);
+
+        // --- SUBMIT ---
+        click(submitBtn);
+    }
+    /**
+     * Hybrid method — fetches FirstName, LastName, Email from DB
+     * using Email from the Excel row as the lookup key.
+     * Gender, UserNumber, DateOfBirth, Hobbies, fileInput, State, City
+     * still come from Excel.
+     *
+     * DB fetch and form fill are self-contained here —
+     * FormTest does not need to know about DBUtil at all.
+     *
+     * @param row Map from Excel (must contain Email as lookup key)
+     */
+    public void fillAndSubmitHybrid(Map<String, String> row) {
+        String emailDB = row.get("Email");
+        // --- FETCH FROM DB USING EMAIL AS LOOKUP KEY ---
+        // In fillAndSubmitHybrid() — cast Object to String when extracting
+        Map<String, Object> dbData = DBUtil.getUserByEmail("FormTest", emailDB);
+
+        if (dbData == null) {
+            throw new RuntimeException("DB: No record found for email: " + emailDB);
+        }
+
+// Correct key names — lowercase to match getUserByEmail() storage
+        String firstname = (String) dbData.get("firstname");
+        String lastname  = (String) dbData.get("lastname");
+
+        ExtentManager.getTest().log(Status.INFO,
+                "Hybrid: DB supplied → FirstName: " + firstname
+                        + " | LastName: " + lastname
+                        + " | Email: " + emailDB);  //
+
+        // --- FROM EXCEL ---
+
+        String userEmail   = row.get("Email");
+        String gender      = row.get("Gender");
+        String userNumber  = row.get("UserNumber");
+        String dob         = row.get("DateOfBirth");
+        String hobbies     = row.get("Hobbies");
+        String filePath    = row.get("fileInput");
+        String state       = row.get("State");
+        String city        = row.get("City");
+
+        // --- NAVIGATE ---
+        click(formsbtn);
+        click(pracformsbtn);
+
+        // --- FILL FORM FIELDS ---
+        sendKeys(fname, firstname);
+        sendKeys(lname, lastname);
+        sendKeys(email, emailDB);
         selectRadioButtonByValue(genderOptions, gender);
         sendKeys(usernumber, userNumber);
         typeDate(dateofbirth, dob);
