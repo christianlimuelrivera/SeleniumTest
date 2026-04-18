@@ -3,6 +3,7 @@ package utils;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import com.aventstack.extentreports.reporter.configuration.Theme;
 
 /**
  * 📊 EXTENTMANAGER - The Reporting Engine
@@ -10,31 +11,40 @@ import com.aventstack.extentreports.reporter.ExtentSparkReporter;
  */
 public class ExtentManager {
 
-    // 🏛️ The "Library": This object manages the entire HTML file itself.
-    private static ExtentReports extent;
 
-    // 🧵 The "Secret Weapon": ThreadLocal.
-    // Imagine 2 reporters (threads) writing 2 different stories at the same time.
-    // ThreadLocal gives each reporter their own private notebook so they don't
-    // mix up their notes.
+    private static ExtentReports extent;
     private static ThreadLocal<ExtentTest> methodTest = new ThreadLocal<>();
 
     /**
      * 🏗️ GET INSTANCE: Setup the physical report file.
-     * It only creates the file ONCE per test run (Singleton pattern).
+     * Includes System Metadata for professional audit trails.
      */
     public static synchronized ExtentReports getInstance() {
         if (extent == null) {
-            // 1️⃣ Decide where the report lives (Reports folder) and what it's named.
+            // 1️⃣ Initialize the Spark Reporter
             ExtentSparkReporter spark = new ExtentSparkReporter("Reports/AutomationReport.html");
 
-            // 2️⃣ Attach the "Spark" reporter to the main ExtentReports object.
+            // 2️⃣ --- PROFESSIONAL CONFIGURATION ---
+            spark.config().setDocumentTitle("DemoQA Regression Report"); // Browser Tab Title
+            spark.config().setReportName("Selenium Testing"); // Header Name
+            spark.config().setTheme(Theme.DARK); // Set to Dark Theme (Pro Standard)
+            spark.config().setTimeStampFormat("EEEE, MMMM dd, yyyy, hh:mm a '('zzz')'");
+
+            // 3️⃣ Attach Reporter
             extent = new ExtentReports();
             extent.attachReporter(spark);
+
+            // 4️⃣ --- SYSTEM METADATA (Stakeholder Evidence) ---
+            // These appear on the Dashboard tab of your report.
+            extent.setSystemInfo("Tester", "Automation Engineer");
+            extent.setSystemInfo("Environment", "QA-Sandbox");
+            extent.setSystemInfo("Browser", "Cross-Browser Compatible");
+            extent.setSystemInfo("OS", System.getProperty("os.name"));
+            extent.setSystemInfo("Java Version", System.getProperty("java.version"));
+            extent.setSystemInfo("Database", "SQLite - FormTest Table");
         }
         return extent;
     }
-
     /**
      * 📥 SET TEST: Save the current test into the current thread's "notebook."
      * Called in Main.java @BeforeMethod.
