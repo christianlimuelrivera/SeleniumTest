@@ -83,10 +83,13 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.1</version>
                 <configuration>
-                    <includes>
-                        <include>**/*Test.java</include>
-                        <include>**/*Tests.java</include>
-                    </includes>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>testing.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+<!--                    <includes>-->
+<!--                        <include>**/*Test.java</include>-->
+<!--                        <include>**/*Tests.java</include>-->
+<!--                    </includes>-->
                     <parallel>methods</parallel>
                     <threadCount>${threads}</threadCount>
                     <useUnlimitedThreads>false</useUnlimitedThreads>

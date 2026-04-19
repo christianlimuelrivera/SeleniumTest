@@ -10,6 +10,27 @@
         <listener class-name="utils.SuiteListener"/>
         <listener class-name="utils.RetryAnnotationTransformer"/>
     </listeners>
+<!--    To run it by declaring each test case class-->
+        <test name="Test Case" preserve-order="true">
+            <classes>
+<!--                <class name="Examples.LoginTest" />-->
+                <class name="Examples.AlertsFramesModalTest" />
+                <class name="Examples.FormTest" />
+                <class name="Examples.WebTableTest" />
+            </classes>
+        </test>
+    </suite>
+
+<!--  To run all the test cases.  -->
+<!--    <test name="All Examples Tests">-->
+<!--        <packages>-->
+<!--            <package name="Examples" />-->
+<!--        </packages>-->
+<!--    </test>-->
+<!--</suite>-->
+
+
+
 <!--    &lt;!&ndash; 🔐 Login Tests &ndash;&gt;-->
 <!--    <test name="Login Tests">-->
 <!--        <classes>-->
@@ -22,15 +43,15 @@
 <!--        </classes>-->
 <!--    </test>-->
 
-    <!-- 📝 Form Tests -->
-    <test name="Form Tests">
-        <classes>
-            <class name="Examples.FormTest">
-                <methods>
-                    <include name="FormTest"/>
-                </methods>
-            </class>
-        </classes>
-    </test>
+<!--    &lt;!&ndash; 📝 Form Tests &ndash;&gt;-->
+<!--    <test name="Form Tests">-->
+<!--        <classes>-->
+<!--            <class name="Examples.FormTest">-->
+<!--                <methods>-->
+<!--                    <include name="FormTest"/>-->
+<!--                </methods>-->
+<!--            </class>-->
+<!--        </classes>-->
+<!--    </test>-->
 
-</suite>
+<!--</suite>-->
